@@ -1,0 +1,10 @@
+uc_ccavenue.ccavenue_request:
+  # Add js files.
+  js:
+    # weight is used as example attribute, but please avoid it and instead use
+    # dependencies for order loading.
+    js/form.js: {}
+
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
