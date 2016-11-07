@@ -112,20 +112,16 @@ class CcavenuePayment extends PaymentMethodPluginBase implements OffsitePaymentM
 
     $billing_address = $order->getAddress('billing');
     $delivery_address = $order->getAddress('delivery');
-/*var_dump($billing_address);
-exit;*/
+
+		$country_manager = \Drupal::service('country_manager');
+    // getCountry(): Verify the basic get country config entity works.
+    $b_country = $country_manager->getCountry($billing_address->country)->get('name');
+
     $data = array(
-
-      // IPN control notify URL.
-    /*  'notify_url' => Url::fromRoute('uc_paypal.ipn', [], ['absolute' => TRUE])->toString(),
-
       // Display information.
-      'cancel_return' => Url::fromRoute('uc_cart.checkout_review', [], ['absolute' => TRUE])->toString(),
-      'no_note' => 1,
-      'no_shipping' => $this->configuration['wps_no_shipping'],
-      'return' => Url::fromRoute('uc_paypal.wps_complete', ['uc_order' => $order->id()], ['absolute' => TRUE])->toString(),
-      'rm' => 1,*/
-
+      'cancel_url' => Url::fromRoute('uc_cart.checkout_review', [], ['absolute' => TRUE])->toString(),
+      'redirect_url' => Url::fromRoute('uc_ccavenue.order_complete', ['uc_order' => $order->id()], ['absolute' => TRUE])->toString(),
+      'order_id' => $order->id(),
       // Transaction information.
       'currency' => 'INR',
       'language' => 'EN',
@@ -137,7 +133,7 @@ exit;*/
       'billing_email' => $order->getEmail(),      
       'billing_state' => $billing_address->zone,
       'billing_zip' => $billing_address->postal_code,
-      'billing_country' => $billing_address->country,
+      'billing_country' => $b_country,
 
       // Billing information.
       'delivery_name' => substr($delivery_address->first_name, 0, 32).' '.substr($delivery_address->last_name, 0, 64),
